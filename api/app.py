@@ -120,7 +120,7 @@ def predict():
         "description": description,
         "caracteristiques": caracteristiques,
     }
-    logging.info("[predict] inputs: %s", inputs)
+    print("[predict] inputs:", inputs, flush=True)
 
     try:
         result = predict_price(
@@ -133,10 +133,11 @@ def predict():
             description=description,
             caracteristiques=caracteristiques,
         )
-        logging.info("[predict] result: %s", result)
+        print("[predict] result:", result, flush=True)
         return jsonify({"success": True, "prediction": result})
     except Exception as e:
-        logging.exception("[predict] ERREUR predict_price: %s", e)
+        import traceback
+        print("[predict] ERREUR:", traceback.format_exc(), flush=True)
         return jsonify({"success": False, "error": str(e)}), 500
 
 

@@ -136,11 +136,10 @@ def predict_price(quartier, surface_m2, nb_chambres, nb_salons,
         qe, qm, qmed, tm, sxq, lq,
     ]).reshape(1, -1)
     
-    logging.info("[predict_price] features shape: %s", features.shape)
-    logging.info("[predict_price] days=%s month=%s qm=%s qe=%s tb=%s ls=%s",
-                 days, dt.month, qm, qe, tb, ls)
+    print(f"[predict_price] features shape: {features.shape}", flush=True)
+    print(f"[predict_price] days={days} month={dt.month} qm={qm:.0f} qe={qe} tb={tb} ls={ls:.3f}", flush=True)
     log_pred = model.predict(features)[0]
-    logging.info("[predict_price] log_pred=%.4f  raw_prix=%.0f", log_pred, np.expm1(log_pred))
+    print(f"[predict_price] log_pred={log_pred:.4f}  raw_prix={np.expm1(log_pred):.0f}", flush=True)
     prix = max(float(np.expm1(log_pred)), 100_000)
 
     return {
