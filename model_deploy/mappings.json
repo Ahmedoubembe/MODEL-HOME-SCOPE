@@ -1,0 +1,59 @@
+{
+  "quartier_te_mean": {
+    "arafat": 1676270.4918032787,
+    "dar naim": 2489878.048780488,
+    "ksar": 3610869.565217391,
+    "riyadh": 3440769.230769231,
+    "sebkha": 3780000.0,
+    "tevragh zeina": 8209772.117962467,
+    "teyarett": 3330407.407407407,
+    "toujounine": 1571086.956521739
+  },
+  "quartier_te_median": {
+    "arafat": 1300000.0,
+    "dar naim": 1700000.0,
+    "ksar": 2900000.0,
+    "riyadh": 850000.0,
+    "sebkha": 3850000.0,
+    "tevragh zeina": 6500000.0,
+    "teyarett": 2900000.0,
+    "toujounine": 1100000.0
+  },
+  "type_bien_te_mean": {
+    "appartement": 7760000.0,
+    "autre": 4601119.631901841,
+    "chantier": 3585714.285714286,
+    "dar": 2463112.745098039,
+    "duplex": 6459663.461538462,
+    "maison": 5195934.579439253,
+    "terrain": 2892857.1428571427,
+    "villa": 10106944.444444444
+  },
+  "quartier_label_mapping": {
+    "arafat": 0,
+    "dar naim": 1,
+    "ksar": 2,
+    "riyadh": 3,
+    "sebkha": 4,
+    "tevragh zeina": 5,
+    "teyarett": 6,
+    "toujounine": 7
+  },
+  "type_label_mapping": {
+    "appartement": 0,
+    "autre": 1,
+    "chantier": 2,
+    "dar": 3,
+    "duplex": 4,
+    "maison": 5,
+    "terrain": 6,
+    "villa": 7
+  },
+  "global_stats": {
+    "prix_mean": 4339930.615784909,
+    "prix_median": 2600000.0,
+    "nb_chambres_median": 4.0,
+    "nb_salons_median": 2.0,
+    "max_date": "2026-03-02"
+  }
+}
