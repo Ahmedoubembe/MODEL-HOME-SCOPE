@@ -1,7 +1,10 @@
 import os
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from predict import predict_price
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
 CORS(app, origins="*")
@@ -107,6 +110,18 @@ def predict():
     description = str(data.get("description", ""))
     caracteristiques = str(data.get("caracteristiques", ""))
 
+    inputs = {
+        "quartier": quartier_canonical,
+        "surface_m2": surface_m2,
+        "nb_chambres": nb_chambres,
+        "nb_salons": nb_salons,
+        "nb_sdb": nb_sdb,
+        "titre": titre,
+        "description": description,
+        "caracteristiques": caracteristiques,
+    }
+    logging.info("[predict] inputs: %s", inputs)
+
     try:
         result = predict_price(
             quartier=quartier_canonical,
@@ -118,9 +133,11 @@ def predict():
             description=description,
             caracteristiques=caracteristiques,
         )
+        logging.info("[predict] result: %s", result)
         return jsonify({"success": True, "prediction": result})
     except Exception as e:
-        return jsonify({"success": False, "error": "Erreur interne"}), 500
+        logging.exception("[predict] ERREUR predict_price: %s", e)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 if __name__ == "__main__":

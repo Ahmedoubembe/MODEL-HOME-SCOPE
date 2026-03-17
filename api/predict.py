@@ -3,6 +3,7 @@ import re
 import json
 import joblib
 import os
+import logging
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -69,12 +70,12 @@ def predict_price(quartier, surface_m2, nb_chambres, nb_salons,
     sal = nb_salons if nb_salons is not None else G['nb_salons_median']
     sal = min(sal, 10); ch = min(ch, 15)
     
-    # Date
+    # Date — si pas de date fournie, on simule une annonce récente (max_date)
+    max_dt = datetime.strptime(G['max_date'], '%Y-%m-%d')
     if date_publication:
         dt = datetime.strptime(str(date_publication), '%Y-%m-%d')
     else:
-        dt = datetime.now()
-    max_dt = datetime.strptime(G['max_date'], '%Y-%m-%d')
+        dt = max_dt
     days = max((max_dt - dt).days, 0)
     
     # Caractéristiques
@@ -135,9 +136,13 @@ def predict_price(quartier, surface_m2, nb_chambres, nb_salons,
         qe, qm, qmed, tm, sxq, lq,
     ]).reshape(1, -1)
     
+    logging.info("[predict_price] features shape: %s", features.shape)
+    logging.info("[predict_price] days=%s month=%s qm=%s qe=%s tb=%s ls=%s",
+                 days, dt.month, qm, qe, tb, ls)
     log_pred = model.predict(features)[0]
+    logging.info("[predict_price] log_pred=%.4f  raw_prix=%.0f", log_pred, np.expm1(log_pred))
     prix = max(float(np.expm1(log_pred)), 100_000)
-    
+
     return {
         'prix_estime': round(prix),
         'prix_min': round(prix * 0.80),
