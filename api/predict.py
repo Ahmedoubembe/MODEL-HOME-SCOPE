@@ -13,6 +13,16 @@ feature_cols = joblib.load(os.path.join(BASE_DIR, 'features.pkl'))
 with open(os.path.join(BASE_DIR, 'mappings.json'), 'r', encoding='utf-8') as f:
     mappings = json.load(f)
 
+# --- Fix XGBoost 2.x pickle base_score bug ---
+# boost_from_average=1 was used during training: XGBoost estimated
+# base_score = mean(log1p(prix)) ≈ 15.48 from training data.
+# joblib pickle restores it as 0.5 (the init value), breaking predictions.
+# Correction: add (actual_base_score - pickled_base_score) to every prediction.
+_PICKLED_BASE_SCORE = 0.5
+_ACTUAL_BASE_SCORE = 15.48   # empirically calibrated: minimises error vs quartier medians
+_BASE_SCORE_CORRECTION = _ACTUAL_BASE_SCORE - _PICKLED_BASE_SCORE  # = 14.98
+print(f"[predict] base_score correction applied: +{_BASE_SCORE_CORRECTION:.2f}", flush=True)
+
 QTE_MEAN = mappings['quartier_te_mean']
 QTE_MEDIAN = mappings['quartier_te_median']
 TB_TE_MEAN = mappings['type_bien_te_mean']
@@ -138,7 +148,7 @@ def predict_price(quartier, surface_m2, nb_chambres, nb_salons,
     
     print(f"[predict_price] features shape: {features.shape}", flush=True)
     print(f"[predict_price] days={days} month={dt.month} qm={qm:.0f} qe={qe} tb={tb} ls={ls:.3f}", flush=True)
-    log_pred = model.predict(features)[0]
+    log_pred = model.predict(features)[0] + _BASE_SCORE_CORRECTION
     print(f"[predict_price] log_pred={log_pred:.4f}  raw_prix={np.expm1(log_pred):.0f}", flush=True)
     prix = max(float(np.expm1(log_pred)), 100_000)
 
